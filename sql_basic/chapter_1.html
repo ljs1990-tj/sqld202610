@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 1 - 데이터 조회의 마법: SELECT와 WHERE 기초</title>
+    <style>
+        :root {
+            --primary: #1e293b;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --info: #0ea5e9;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-light: #64748b;
+        }
+
+        body {
+            font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.7;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* 상단 링크 버튼 */
+        .top-link-btn {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .top-link-btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.2);
+        }
+        .top-link-btn::before {
+            content: '📋';
+            margin-right: 8px;
+        }
+
+        /* 헤더 영역 */
+        .header {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            padding: 50px 40px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-bottom: 5px solid var(--success);
+        }
+        .header-badge {
+            background: var(--success);
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 900;
+            display: inline-block;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        .header h1 {
+            margin: 0 0 20px 0;
+            font-size: 2.2rem;
+            line-height: 1.4;
+            letter-spacing: -0.5px;
+        }
+        .intro-text {
+            font-size: 1.15rem;
+            color: #e2e8f0;
+            margin: 0;
+            font-weight: 300;
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+        }
+        .intro-text strong {
+            color: var(--accent);
+        }
+
+        /* 섹션 공통 */
+        .section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+        }
+        .section-title {
+            font-size: 1.6rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+            color: var(--primary);
+        }
+
+        .sub-title {
+            font-size: 1.25rem;
+            color: var(--secondary);
+            margin: 30px 0 15px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* SQL 코드 블록 */
+        .code-block {
+            background-color: #1e293b;
+            color: #a7f3d0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 15px 0;
+            border-left: 4px solid var(--secondary);
+        }
+        .code-comment {
+            color: #94a3b8;
+        }
+
+        /* 💡 팁 / 노트 박스 */
+        .note-box {
+            background-color: #fef3c7;
+            border-left: 5px solid var(--accent);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            color: #92400e;
+        }
+        .note-box strong {
+            color: #b45309;
+        }
+
+        @media (max-width: 600px) {
+            .header { padding: 40px 20px; }
+            .header h1 { font-size: 1.8rem; }
+            .section { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- 우측 상단 메인 대시보드 링크 -->
+    <div style="text-align: right;">
+        <a href="https://ljs1990-tj.github.io/sqld/main.html" class="top-link-btn" target="_blank">주제별 학습자료 링크</a>
+    </div>
+
+    <!-- 헤더 -->
+    <div class="header">
+        <span class="header-badge">Chapter 1</span>
+        <h1>📚 데이터 조회의 마법:<br>SELECT와 WHERE 기초</h1>
+        <div class="intro-text">
+            데이터베이스(DB)에서 가장 많이 쓰이는 명령어는 무엇일까요? 바로 데이터를 읽어오는 <strong>DML(데이터 조작어)의 핵심, <code>SELECT</code></strong>입니다. <br><br>
+            이번 시간에는 테이블에 저장된 수많은 데이터 중에서, <strong>내가 원하는 정보만 입맛대로 골라오고(SELECT) 필터링(WHERE)하는 다양한 방법</strong>을 실습해 보겠습니다.
+        </div>
+    </div>
+
+    <!-- 실습 1. 기본 조회 -->
+    <div class="section">
+        <h2 class="section-title">🔍 1. 원하는 데이터만 쏙쏙 뽑아오기 (기본 SELECT)</h2>
+        <p>테이블의 모든 내용을 보거나, 특정 칸(컬럼)만 골라보는 가장 기초적인 명령어입니다.</p>
+
+        <h3 class="sub-title">1-1. 테이블 전체 조회하기</h3>
+        <div class="code-block"><span class="code-comment">-- 별표(*)는 '테이블의 모든 컬럼'을 의미합니다.</span>
+SELECT *
+FROM STUDENT;
+
+SELECT *
+FROM SUBJECT;
+
+SELECT *
+FROM ENROL;</div>
+
+        <h3 class="sub-title">1-2. 특정 컬럼만 골라서 조회하기</h3>
+        <div class="code-block"><span class="code-comment">-- 학생 테이블에서 학번, 이름, 학과 정보만 깔끔하게 추려옵니다.</span>
+SELECT STU_NO, STU_NAME, STU_DEPT
+FROM STUDENT;</div>
+    </div>
+
+    <!-- 실습 2. 조건 검색 -->
+    <div class="section">
+        <h2 class="section-title">🎯 2. 조건 달기 (WHERE 연산자)</h2>
+        <p><code>WHERE</code> 절을 사용하면 내가 원하는 특정 조건을 만족하는 행(데이터)만 필터링할 수 있습니다.</p>
+
+        <h3 class="sub-title">2-1. 같다(=) / 다르다(!=)</h3>
+        <div class="code-block"><span class="code-comment">-- '기계'과 학생들만 조회</span>
+SELECT *
+FROM STUDENT
+WHERE STU_DEPT = '기계'; 
+
+<span class="code-comment">-- '기계'과가 아닌 타 학과 학생들만 조회</span>
+SELECT *
+FROM STUDENT
+WHERE STU_DEPT != '기계';</div>
+
+        <h3 class="sub-title">2-2. 크기 비교 연산자 (>=, >)</h3>
+        <div class="code-block"><span class="code-comment">-- 키가 168 이상(포함)인 학생들 조회</span>
+SELECT *
+FROM STUDENT
+WHERE STU_HEIGHT >= 168;
+
+<span class="code-comment">-- 키가 168 초과(미포함)인 학생들 조회</span>
+SELECT *
+FROM STUDENT
+WHERE STU_HEIGHT > 168;</div>
+    </div>
+
+    <!-- 실습 3. 다중 조건 엮기 -->
+    <div class="section">
+        <h2 class="section-title">🧩 3. 여러 조건 엮기 (AND, OR, IN)</h2>
+        <p>조건이 두 개 이상일 때는 논리 연산자를 사용해 복잡한 검색을 수행합니다.</p>
+
+        <h3 class="sub-title">3-1. AND (모두 만족) / OR (하나라도 만족)</h3>
+        <div class="code-block"><span class="code-comment">-- [AND] 전기전자과 '이면서' 성별이 남자인 학생 조회</span>
+SELECT *
+FROM STUDENT
+WHERE STU_DEPT = '전기전자' AND STU_GENDER = 'M';
+
+<span class="code-comment">-- [OR] '컴퓨터정보' 학과 '이거나' 3학년인 학생 조회</span>
+SELECT *
+FROM STUDENT
+WHERE STU_DEPT = '컴퓨터정보' OR STU_GRADE = 3;</div>
+
+        <h3 class="sub-title">3-2. IN 연산자 (여러 값 중 하나라도 포함되면 참)</h3>
+        <div class="code-block"><span class="code-comment">-- 1학년이거나 3학년인 학생 출력 (OR를 여러 번 쓰는 것보다 훨씬 깔끔합니다!)</span>
+SELECT *
+FROM STUDENT
+WHERE STU_GRADE IN (1, 3);
+
+<span class="code-comment">-- 위 코드는 아래 코드와 완벽히 똑같이 작동합니다.
+-- WHERE STU_GRADE = 1 OR STU_GRADE = 3;</span></div>
+    </div>
+
+    <!-- 실습 4. 특수 검색 -->
+    <div class="section" style="margin-bottom: 0;">
+        <h2 class="section-title">✨ 4. 특수 검색 (NULL과 LIKE)</h2>
+
+        <h3 class="sub-title">4-1. 빈 칸 찾기 (IS NULL)</h3>
+        <p>데이터베이스에서 <strong>NULL은 '값이 아직 입력되지 않은 빈 상태'</strong>를 의미합니다. `=' 기호로는 절대 찾을 수 없고, 반드시 <code>IS NULL</code>을 써야 합니다.</p>
+        <div class="code-block"><span class="code-comment">-- 키 정보가 누락된(빈 값인) 학생들 찾기</span>
+SELECT *
+FROM STUDENT
+WHERE STU_HEIGHT IS NULL;
+
+<span class="code-comment">-- 반대로 키 정보가 정상적으로 입력되어 있는 학생들만 찾기</span>
+SELECT *
+FROM STUDENT
+WHERE STU_HEIGHT IS NOT NULL;</div>
+
+        <h3 class="sub-title">4-2. 패턴 검색 (LIKE 연산자)</h3>
+        <p>정확한 값을 모를 때, 특정 단어가 포함되어 있는지를 검색합니다.<br>
+        (<code>%</code> = 길이에 상관없이 모든 문자열, <code>_</code> = 정확히 한 글자)</p>
+        <div class="code-block"><span class="code-comment">-- 학번이 '2015'로 시작하고 뒤에 정확히 4글자가 더 있는 학생 (총 8자리 학번)</span>
+SELECT *
+FROM STUDENT
+WHERE STU_NO LIKE '2015____';
+
+<span class="code-comment">-- 학번이 무엇으로 시작하든 끝자리가 '5'로 끝나는 학생</span>
+SELECT *
+FROM STUDENT
+WHERE STU_NO LIKE '%5';</div>
+        
+        <div class="note-box">
+            <strong>💡 기억해 두세요!</strong><br>
+            <code>LIKE '%김%'</code> 이라고 검색하면 이름 중간에 '김'이 들어간 모든 사람을 찾아낼 수 있습니다. 게시판의 '제목 검색' 기능이 바로 이 <code>LIKE</code> 연산자를 사용해 만들어집니다.
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

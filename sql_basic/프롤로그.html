@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQLD 거꾸로 커리큘럼 오리엔테이션</title>
+    <style>
+        :root {
+            --primary: #1e293b;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --success: #10b981;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-light: #64748b;
+        }
+
+        body {
+            font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.7;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* 상단 링크 버튼 */
+        .top-link-btn {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .top-link-btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.2);
+        }
+        .top-link-btn::before {
+            content: '📋';
+            margin-right: 8px;
+        }
+
+        /* 헤더 영역 */
+        .header {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            padding: 50px 40px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-bottom: 5px solid var(--accent);
+        }
+        .header h1 {
+            margin: 0 0 20px 0;
+            font-size: 2.2rem;
+            line-height: 1.4;
+            letter-spacing: -0.5px;
+        }
+        .intro-text {
+            font-size: 1.15rem;
+            color: #e2e8f0;
+            margin: 0;
+            font-weight: 300;
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+        }
+        .intro-text strong {
+            color: var(--accent);
+        }
+
+        /* 섹션 공통 */
+        .section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+        }
+        .section-title {
+            font-size: 1.6rem;
+            margin-top: 0;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        /* 1. 문제점 섹션 */
+        .problem-section {
+            border-left: 6px solid var(--danger);
+        }
+        .problem-section .section-title {
+            color: var(--danger);
+        }
+        .problem-box {
+            background: #fef2f2;
+            padding: 20px;
+            border-radius: 8px;
+            color: #991b1b;
+        }
+
+        /* 2. 해결책 섹션 */
+        .solution-section {
+            border-left: 6px solid var(--success);
+        }
+        .solution-section .section-title {
+            color: var(--success);
+        }
+        
+        /* 스텝 카드 */
+        .step-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: transform 0.2s ease;
+        }
+        .step-card:hover {
+            transform: translateX(5px);
+            border-color: #cbd5e1;
+            background: #f1f5f9;
+        }
+        .step-card h3 {
+            margin: 0 0 15px 0;
+            color: var(--primary);
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+        .step-content {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+        }
+        .step-content li {
+            margin-bottom: 12px;
+            padding-left: 20px;
+            position: relative;
+        }
+        .step-content li::before {
+            content: '👉';
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 0.9rem;
+        }
+        .step-content li:last-child {
+            margin-bottom: 0;
+        }
+        .step-label {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+        .label-why {
+            background: var(--secondary);
+        }
+
+        /* 3. 마치며 섹션 */
+        .conclusion-section {
+            background: linear-gradient(to right, #eff6ff, #f8fafc);
+            border: 1px solid #bfdbfe;
+            text-align: center;
+        }
+        .conclusion-section h2 {
+            color: var(--secondary);
+        }
+        .highlight {
+            background: linear-gradient(180deg, rgba(255,255,255,0) 60%, #fde68a 40%);
+            font-weight: bold;
+            color: var(--primary);
+            padding: 0 5px;
+        }
+
+        @media (max-width: 600px) {
+            .header { padding: 40px 20px; }
+            .header h1 { font-size: 1.8rem; }
+            .section { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- 우측 상단 메인 대시보드 링크 -->
+    <div style="text-align: right;">
+        <a href="https://ljs1990-tj.github.io/sqld/main.html" class="top-link-btn" target="_blank">주제별 학습자료 링크</a>
+    </div>
+
+    <!-- 헤더 -->
+    <div class="header">
+        <h1>🗺️ SQLD 완벽 정복을 위한<br>'거꾸로' 커리큘럼 오리엔테이션</h1>
+        <div class="intro-text">
+            안녕하세요! 데이터베이스의 세계에 오신 것을 환영합니다. <br><br>
+            우리가 앞으로 학습할 순서는 시중에 있는 일반적인 SQLD 수험서나 교재의 목차와는 조금 다릅니다. 왜 1페이지부터 순서대로 배우지 않고 순서를 뒤죽박죽 섞어놓았을까요? <br><br>
+            그 이유는 여러분이 <strong>'포기 없이, 가장 빠르고 직관적으로'</strong> 데이터베이스를 이해하게 만들기 위해서입니다.
+        </div>
+    </div>
+
+    <!-- 1. 기존 방식의 문제점 -->
+    <div class="section problem-section">
+        <h2 class="section-title">🚨 1. 기존 교재 순서의 치명적인 문제점</h2>
+        <p>대부분의 SQLD 교재는 1과목인 <strong>'데이터 모델링(엔터티, 속성, 정규화 등)'</strong>으로 시작합니다.<br>
+        데이터베이스를 한 번도 본 적 없는 사람에게 다짜고짜 "엔터티는 2개 이상의 인스턴스를 가져야 하고, 제3정규화는 이행적 함수 종속을 제거하는 것입니다"라고 가르치면 어떻게 될까요?</p>
+        
+        <div class="problem-box">
+            <strong>❌ 결과:</strong> 무슨 외계어인지 전혀 이해하지 못하고, 무작정 암기만 하다가 데이터베이스에 대한 흥미를 잃고 책을 덮어버리게 됩니다. 집을 한 번도 본 적 없는 사람에게 집의 설계도(청사진)부터 들이미는 격입니다.
+        </div>
+    </div>
+
+    <!-- 2. 우리의 해결책 -->
+    <div class="section solution-section">
+        <h2 class="section-title">💡 2. 우리의 해결책: '거꾸로' 커리큘럼 4단계</h2>
+        <p style="margin-bottom: 25px;">우리는 가장 실용적이고 재미있는 것부터 먼저 맛보고, 궁금증이 생길 때쯤 이론을 투입하는 <strong>'영화 예고편(Trailer)'</strong> 방식을 채택했습니다.</p>
+
+        <!-- 프롤로그 -->
+        <div class="step-card">
+            <h3>🎬 프롤로그: "데이터베이스 맛보기" (DML, 기초 SELECT)</h3>
+            <ul class="step-content">
+                <li><span class="step-label">무엇을 하나요?</span> 강사가 미리 만들어둔 빈 테이블에 여러분이 직접 데이터를 입력(<code>INSERT</code>)해 보고, 그 데이터를 화면에 띄워봅니다(<code>SELECT</code>).</li>
+                <li><span class="step-label label-why">왜 먼저 하나요?</span> 눈으로 직접 데이터가 표(엑셀) 형태로 들어가고 나오는 것을 경험하면, "아하! DB라는 게 결국 규칙이 있는 엑셀 같은 거구나!"라는 직관적인 감을 단 10분 만에 잡을 수 있습니다.</li>
+            </ul>
+        </div>
+
+        <!-- 1단계 -->
+        <div class="step-card">
+            <h3>🕵️ 1단계: "이 테이블들은 왜 쪼개져 있을까?" (1과목: 데이터 모델링)</h3>
+            <ul class="step-content">
+                <li><span class="step-label">무엇을 하나요?</span> 앞서 우리가 사용했던 '학생' 테이블과 '성적' 테이블이 왜 하나로 합쳐져 있지 않고 두 개로 쪼개져 있었는지, 그 설계의 비밀(엔터티, 식별자, 정규화)을 파헤칩니다.</li>
+                <li><span class="step-label label-why">왜 지금 하나요?</span> 데이터를 직접 넣어본 뒤에 이론을 배우면, "아, 테이블을 안 쪼개면 데이터를 수정할 때 엄청 귀찮아지는구나!" 하고 실무적인 관점에서 이론을 100% 흡수하게 됩니다. 단순 암기가 아니라 원리를 깨닫는 시간입니다.</li>
+            </ul>
+        </div>
+
+        <!-- 2단계 -->
+        <div class="step-card">
+            <h3>🏗️ 2단계: "내 손으로 직접 건물 짓고 통제하기" (2과목: DDL, DCL, TCL)</h3>
+            <ul class="step-content">
+                <li><span class="step-label">무엇을 하나요?</span> 설계도를 그리는 법을 배웠으니, 이제 실제로 컴퓨터에 테이블(건물)을 생성(<code>CREATE</code>)하고, 부수고(<code>DROP</code>), 아무나 못 들어오게 보안(<code>GRANT</code>)을 걸어보는 관리자 명령어를 배웁니다.</li>
+                <li><span class="step-label label-why">왜 지금 하나요?</span> 설계 이론(1단계)을 실제 물리적인 컴퓨터 환경에 적용해 보는 가장 자연스러운 흐름이기 때문입니다.</li>
+            </ul>
+        </div>
+
+        <!-- 3단계 -->
+        <div class="step-card" style="margin-bottom: 0;">
+            <h3>👨‍🍳 3단계: "데이터 요리 마스터" (2과목: 고급 SELECT, JOIN)</h3>
+            <ul class="step-content">
+                <li><span class="step-label">무엇을 하나요?</span> 흩어져 있는 테이블들을 하나로 엮고(<code>JOIN</code>), 통계를 내고(<code>GROUP BY</code>), 순위를 매기는(<code>RANK</code>) 실전 데이터 분석 기술을 익힙니다. SQLD 시험 문제의 70%가 여기서 나옵니다.</li>
+                <li><span class="step-label label-why">왜 마지막에 하나요?</span> 데이터가 어떻게 설계되었고(1과목), 어떻게 만들어졌는지(DDL) 완벽히 이해한 상태에서 쿼리를 짜면, 복잡한 조인(JOIN)이나 서브쿼리도 헷갈리지 않고 정확하게 작성할 수 있기 때문입니다.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 3. 마치며 -->
+    <div class="section conclusion-section">
+        <h2 class="section-title" style="border: none; margin-bottom: 10px;">🎯 마치며</h2>
+        <p style="font-size: 1.1rem;">
+            이 커리큘럼은 <span class="highlight">'경험 ➔ 호기심 ➔ 이론 ➔ 실전 응용'</span>이라는 뇌과학적인 학습 흐름에 완벽하게 맞춰져 있습니다. <br><br>
+            딱딱한 이론에 지레 겁먹지 마세요. 키보드에 손을 올리고 데이터를 직접 움직여보며, 재미있고 확실한 길로 SQLD 합격까지 달려가 봅시다!
+        </p>
+    </div>
+
+</div>
+
+</body>
+</html>
