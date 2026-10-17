@@ -3,343 +3,288 @@
 <html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQLD 1과목: ERD 표기법과 작성 6단계 절차</title>
+    <title>SQLD 1과목: 데이터 독립성과 3단계 스키마 구조</title>
     <style>
         :root {
-            --primary: #2c3e50;
-            --secondary: #1abc9c;
-            --accent: #e74c3c;
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --text-muted: #666666;
-            --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            --bg-color: #f4f6f9;
+            --text-main: #2c3e50;
+            --text-muted: #596275;
+            
+            /* 테마 컬러 */
+            --theme-shield: #3498db;  /* 방패/독립성 */
+            --theme-layer: #9b59b6;   /* 층/스키마 */
+            --theme-draw: #e67e22;    /* 그림/ERD */
+            --theme-alert: #e74c3c;   /* 기출포인트 */
+            
+            --box-shadow: 0 8px 20px rgba(0,0,0,0.05);
         }
 
         body {
             font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-main);
             line-height: 1.6;
             margin: 0;
             padding: 40px 20px;
         }
 
         .container {
-            max-width: 950px;
+            max-width: 900px;
             margin: 0 auto;
-            background-color: var(--card-bg);
-            padding: 45px;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
+            background: white;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: var(--box-shadow);
         }
 
         h1 {
-            color: var(--primary);
-            font-size: 2.2rem;
             text-align: center;
-            border-bottom: 3px solid var(--secondary);
-            padding-bottom: 15px;
+            font-size: 2.2rem;
+            color: var(--text-main);
+            border-bottom: 3px solid #dfe6e9;
+            padding-bottom: 20px;
             margin-bottom: 40px;
         }
 
-        h2 {
-            color: var(--primary);
-            font-size: 1.6rem;
+        .section-title {
+            font-size: 1.7rem;
             margin-top: 50px;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #ecf0f1, transparent);
-            border-left: 5px solid var(--secondary);
-            border-radius: 4px;
-        }
-
-        /* 6단계 타임라인 스타일 */
-        .timeline {
-            position: relative;
-            margin: 30px 0;
-            padding-left: 30px;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 14px;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background-color: #bdc3c7;
-        }
-
-        .step-card {
-            position: relative;
-            background: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            transition: transform 0.2s ease;
-        }
-
-        .step-card:hover {
-            transform: translateX(5px);
-            border-color: var(--secondary);
-        }
-
-        .step-marker {
-            position: absolute;
-            left: -39px;
-            top: 20px;
-            width: 20px;
-            height: 20px;
-            background-color: var(--secondary);
-            border: 4px solid #ffffff;
-            border-radius: 50%;
-            box-shadow: 0 0 0 2px #bdc3c7;
-        }
-
-        .step-card h3 {
-            color: var(--primary);
-            margin-top: 0;
             display: flex;
             align-items: center;
-            font-size: 1.3rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid;
         }
 
-        .step-card h3 span {
-            background-color: var(--secondary);
+        .title-shield { color: var(--theme-shield); border-color: var(--theme-shield); }
+        .title-layer { color: var(--theme-layer); border-color: var(--theme-layer); }
+        .title-draw { color: var(--theme-draw); border-color: var(--theme-draw); }
+
+        /* 카드 공통 스타일 */
+        .content-card {
+            background: #ffffff;
+            border: 1px solid #eeeeee;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        /* 3단계 스키마 레이어 디자인 */
+        .schema-layer {
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 6px solid;
+            position: relative;
+        }
+        
+        .schema-external { background: #fdf2e9; border-color: #e67e22; }
+        .schema-conceptual { background: #f4ecf7; border-color: #9b59b6; }
+        .schema-internal { background: #eaf2f8; border-color: #3498db; }
+
+        .schema-layer h3 {
+            margin-top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .schema-badge {
+            font-size: 0.85rem;
+            padding: 5px 10px;
+            border-radius: 20px;
             color: white;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            margin-right: 10px;
+            background: var(--text-main);
         }
 
         /* 비유 & Add-on 박스 */
         .analogy-box {
             background-color: #f8f9fa;
-            border-left: 4px solid #3498db;
+            border-left: 4px solid #1abc9c;
             padding: 15px;
-            margin-top: 15px;
-            border-radius: 0 6px 6px 0;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
         }
-
-        .analogy-box strong { color: #2980b9; }
 
         .addon-box {
-            background-color: #fff9f0;
-            padding: 12px 15px;
-            margin-top: 15px;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            color: #d35400;
-        }
-
-        /* ERD 기호 스타일 */
-        .symbol-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            background: linear-gradient(to right, #fff9e6, #ffffff);
+            border: 1px solid #fdebd0;
+            padding: 20px;
+            border-radius: 10px;
             margin-top: 20px;
         }
 
-        .symbol-card {
-            background: #fdfefe;
-            border: 2px solid #ebdef0;
-            border-radius: 10px;
-            padding: 25px;
-            text-align: center;
+        .addon-box h4 {
+            color: #d35400;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
         }
+        .addon-box h4::before { content: "💡"; margin-right: 8px; }
 
-        .symbol-card h3 { color: #8e44ad; margin-top: 0; border-bottom: 1px dashed #ebdef0; padding-bottom: 10px; }
-        
-        .symbol-icon {
-            font-size: 3rem;
-            color: #2c3e50;
-            font-weight: bold;
-            margin: 15px 0;
-            background: #f4ecf7;
-            display: inline-block;
-            padding: 10px 25px;
-            border-radius: 10px;
-        }
-
-        /* 기출 암기 박스 */
+        /* 기출 포인트 박스 */
         .exam-box {
-            background: linear-gradient(135deg, #2c3e50, #1a252f);
+            background: var(--text-main);
             color: white;
-            padding: 30px;
-            border-radius: 12px;
-            margin: 40px 0;
-            text-align: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            padding: 35px;
+            border-radius: 15px;
+            margin-top: 60px;
+            box-shadow: 0 10px 25px rgba(44, 62, 80, 0.3);
         }
 
         .exam-box h2 {
-            background: none;
-            border: none;
             color: #f1c40f;
+            text-align: center;
             margin-top: 0;
-            padding: 0;
-            justify-content: center;
+            border-bottom: 1px dashed rgba(255,255,255,0.2);
+            padding-bottom: 20px;
         }
 
-        .exam-box .keyword {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: #f1c40f;
-            letter-spacing: 2px;
-            padding: 15px;
-            border: 2px dashed #f1c40f;
-            display: inline-block;
-            margin: 15px 0;
+        .flashcard {
+            background: rgba(255,255,255,0.1);
+            padding: 15px 20px;
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .highlight { font-weight: bold; color: var(--accent); }
-        .erd-visual { font-family: monospace; font-size: 1.2rem; background: #eee; padding: 10px; border-radius: 5px; display: inline-block; letter-spacing: -1px; }
-
-        @media (max-width: 768px) {
-            .symbol-grid { grid-template-columns: 1fr; }
-            .exam-box .keyword { font-size: 1.3rem; }
+        .flashcard-q { flex: 2; padding-right: 20px; }
+        .flashcard-a { 
+            flex: 1; 
+            text-align: right; 
+            color: #f1c40f; 
+            font-weight: bold;
+            font-size: 1.1rem;
         }
+
+        /* 텍스트 강조 */
+        strong { color: var(--theme-alert); }
+        .hl { background: linear-gradient(180deg, rgba(255,255,255,0) 60%, #ffeaa7 40%); color: #2c3e50; font-weight: bold; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>📖 1과목 핵심 요약: ERD 표기법과 작성 6단계 절차</h1>
+    <h1>📖 1과목 핵심 요약: 데이터 독립성과 3단계 스키마 구조</h1>
 
-    <h2>2. 🗺️ 대학교 설계도 그리기: ERD 작성 6단계 (초핵심!)</h2>
-    <p>건축가가 설계도를 그릴 때도 순서가 있듯, ERD를 그리는 완벽한 6단계 절차가 있습니다. <strong class="highlight">시험에서 "다음 중 ERD 작성 순서로 올바른 것은?" 하고 순서 맞추기 문제로 무조건 출제됩니다.</strong></p>
-
-    <div class="exam-box">
-        <h2>🚨 실전 대비 초압축 암기 공식</h2>
-        <p>시험장에서는 이 여섯 글자만 똑똑히 기억하시면 1초 만에 정답을 찾습니다!</p>
-        <div class="keyword">"도·배·설·명·참·필"</div>
-        <p style="opacity: 0.9; font-size: 0.9rem;">(도출 ➔ 배치 ➔ 관계 설정 ➔ 관계명 ➔ 참여도 ➔ 필수 여부)</p>
-    </div>
-
-    <div class="timeline">
-        <div class="step-card">
-            <div class="step-marker"></div>
-            <h3><span>1단계</span> 엔터티를 그린다 (도출)</h3>
-            <p><strong>설명:</strong> 시스템에 필요한 명사(주인공)들을 찾아 네모 박스로 그립니다.</p>
-            <div class="analogy-box">
-                <strong>🎓 수강신청 비유:</strong> 백지에 <strong>[학생]</strong>, <strong>[수강내역]</strong>, <strong>[과목]</strong> 이라는 3개의 네모 박스를 덩그러니 그립니다.
-            </div>
-        </div>
-
-        <div class="step-card">
-            <div class="step-marker"></div>
-            <h3><span>2단계</span> 엔터티를 적절하게 배치한다 (배치)</h3>
-            <p><strong>설명:</strong> 아무렇게나 두는 것이 아니라, 가장 중요하고 기준이 되는 업무의 핵심 엔터티를 <strong>왼쪽 상단(Top-Left)</strong>에 두고, 연결 고리가 되는 중심 엔터티를 <strong>중앙</strong>에 배치합니다.</p>
-            <div class="analogy-box">
-                <strong>🎓 수강신청 비유:</strong> 대학교의 가장 기본인 <strong>[학생]</strong> 박스를 왼쪽 위에 둡니다. 그리고 학생과 과목을 이어주는 핵심인 <strong>[수강내역]</strong> 박스를 한가운데에 배치합니다.
-            </div>
-            <div class="addon-box">
-                💡 <strong>실무 Add-on:</strong> 왜 왼쪽 상단일까요? 인간의 시선은 본능적으로 좌측 상단에서 우측 하단(Z자 형태)으로 이동하기 때문입니다. 설계도를 읽는 사람을 위한 배려입니다.
-            </div>
-        </div>
-
-        <div class="step-card">
-            <div class="step-marker"></div>
-            <h3><span>3단계</span> 엔터티 간의 관계를 설정한다 (관계 설정)</h3>
-            <p><strong>설명:</strong> 네모 박스들 사이에 선을 그어서 서로 어떤 연관이 있는지 이어줍니다.</p>
-            <div class="analogy-box">
-                <strong>🎓 수강신청 비유:</strong> [학생]과 [수강내역] 사이에 1차적으로 선을 긋고, [과목]과 [수강내역] 사이에도 선을 긋습니다.
-            </div>
-            <div class="addon-box">
-                💡 <strong>실무 Add-on:</strong> 이때 선이 꼬리를 물고 무한 루프를 도는 <strong>순환(Circle) 관계</strong>가 발생하지 않도록 조심해야 합니다. 데이터 무결성에 심각한 오류를 낼 수 있습니다.
-            </div>
-        </div>
-
-        <div class="step-card">
-            <div class="step-marker"></div>
-            <h3><span>4단계</span> 관계명을 기술한다 (관계명)</h3>
-            <p><strong>설명:</strong> 선만 그어두면 무슨 뜻인지 모르니, 선 위에 동사(현재형)로 이름을 적어줍니다. 너무 포괄적이거나 애매한 단어는 피합니다.</p>
-            <div class="analogy-box">
-                <strong>🎓 수강신청 비유:</strong> 
-                <br>• 학생 ➔ 수강내역 선 위에: <strong>"신청한다"</strong>
-                <br>• 과목 ➔ 수강내역 선 위에: <strong>"포함된다"</strong>
-            </div>
-        </div>
-
-        <div class="step-card">
-            <div class="step-marker"></div>
-            <h3><span>5단계</span> 관계의 참여도를 기술한다 (참여도)</h3>
-            <p><strong>설명:</strong> 1:1인지, 1:M(다수)인지, M:N인지 개수(수량)를 파악하여 기호를 표시합니다.</p>
-            <div class="analogy-box">
-                <strong>🎓 수강신청 비유:</strong> 학생 1명이 '여러 개'의 과목을 수강할 수 있으므로, 수강내역 쪽에 <strong>까마귀 발(삼지창)</strong> 모양을 그려줍니다. (1:M 관계 완성)
-            </div>
-        </div>
-
-        <div class="step-card">
-            <div class="step-marker"></div>
-            <h3><span>6단계</span> 관계의 필수 여부를 기술한다 (필수 여부)</h3>
-            <p><strong>설명:</strong> 이 관계가 반드시 있어야만 하는가(필수), 없어도 되는가(선택)를 표시합니다. 선택 참여일 경우 선 끝에 <strong>동그라미(O)</strong>를 그립니다.</p>
-            <div class="analogy-box">
-                <strong>🎓 수강신청 비유:</strong> 신입생은 아직 수강신청을 '0건' 했을 수도 있습니다. 수강내역이 하나도 없을 수도 있으므로, 선 끝에 <strong>선택(O) 기호</strong>를 그려줍니다.
-            </div>
-        </div>
-    </div>
-
-    <hr style="border: 0; height: 1px; background: #e0e0e0; margin: 50px 0;">
-
-    <h2>📖 1과목 핵심 요약 : ERD 관계 선 그리기 (IE 표기법)</h2>
-    <p>앞서 ERD 작성 6단계 중 5단계(참여도)와 6단계(필수 여부)를 시각적으로 어떻게 그리는지 보여주는 파트입니다. 시험에 나오는 기호는 딱 3가지만 완벽히 구별하시면 됩니다.</p>
-
-    <div class="symbol-grid">
-        <div class="symbol-card">
-            <h3>1. 🔱 관계의 참여도 (1 vs M)</h3>
-            <p style="color: #666; font-size: 0.95rem;">선 끝이 갈라지는지 아닌지로 개수를 파악합니다.</p>
-            
-            <div class="symbol-icon">|</div>
-            <p><strong>작대기 하나 : 1개</strong></p>
-            <div class="analogy-box" style="text-align: left; font-size: 0.9rem;">
-                수강내역 1줄은 반드시 <strong>'1명'</strong>의 학생에게만 속합니다.<br>(수강내역 쪽에서 학생 쪽을 바라볼 때)
-            </div>
-
-            <div class="symbol-icon" style="margin-top: 20px;">∈</div>
-            <p><strong>까마귀 발(삼지창) : 여러 개 (M, 다수)</strong></p>
-            <div class="analogy-box" style="text-align: left; font-size: 0.9rem;">
-                학생 1명은 <strong>'여러 개'</strong>의 수강내역을 가질 수 있습니다.<br>(학생 쪽에서 수강내역 쪽을 바라볼 때)
-            </div>
-        </div>
-
-        <div class="symbol-card">
-            <h3>2. ⭕ 관계의 필수 여부 (반드시?)</h3>
-            <p style="color: #666; font-size: 0.95rem;">선 끝에 동그라미가 있는지, 작대기가 있는지를 봅니다.</p>
-
-            <div class="symbol-icon">|</div>
-            <p><strong>작대기 : 필수 (Mandatory)</strong></p>
-            <div class="analogy-box" style="text-align: left; font-size: 0.9rem;">
-                수강내역이 존재하려면 <strong>반드시</strong> 그 주인이 되는 '학생'이 있어야 합니다. 학생 쪽 선 끝에는 필수(<code>|</code>)를 긋습니다.
-            </div>
-
-            <div class="symbol-icon" style="margin-top: 20px;">O</div>
-            <p><strong>동그라미 : 선택 (Optional)</strong></p>
-            <div class="analogy-box" style="text-align: left; font-size: 0.9rem;">
-                갓 입학한 신입생은 아직 수강신청을 안 했을 수도(0개) 있습니다. 수강내역 쪽 선 끝에는 선택(<code>O</code>)을 긋습니다.
-            </div>
-        </div>
-    </div>
-
-    <div style="background-color: #fdf2e9; border: 2px solid #e67e22; border-radius: 10px; padding: 30px; margin-top: 40px; text-align: center;">
-        <h3 style="color: #d35400; margin-top: 0;">💡 기호들을 완벽하게 조합해 보기 (1:M 선택 관계)</h3>
+    <h2 class="section-title title-shield">1. 🛡️ 데이터 독립성: "충격 흡수 장치"</h2>
+    <div class="content-card">
+        <p>건물의 1층 인테리어를 바꾼다고 해서 2층 바닥이 무너지면 안 되듯, <strong>하위 단계를 수정하더라도 상위 단계 프로그램이 고장 나지 않도록 방어하는 성질</strong>을 '데이터 독립성'이라고 합니다.</p>
         
-        <div class="erd-visual">
-            [학생] ───|초───────O∈ [수강내역]
-        </div>
-        
-        <ul style="text-align: left; max-width: 600px; margin: 20px auto 0 auto; color: #555; line-height: 1.8;">
-            <li><strong>해석 1:</strong> 학생 1명은 수강내역을 안 가질 수도(<strong>O</strong>), 여러 개 가질 수도(<strong>∈</strong>) 있다.</li>
-            <li><strong>해석 2:</strong> 수강내역은 주인이 되는 1명(<strong>|</strong>)의 학생을 반드시(<strong>|</strong>) 가져야 한다.</li>
-            <li style="color: #d35400; font-weight: bold; list-style: none; text-align: center; margin-top: 10px;">
-                ➔ 설계도를 그리는 'IE 표기법'의 가장 완벽하고 흔한 형태입니다!
+        <ul>
+            <li>
+                <span class="hl">① 논리적 독립성 (개념 스키마 ↔ 외부 스키마 방어)</span>
+                <ul>
+                    <li><strong>상황:</strong> DBA가 학교 시스템에 '기숙사'라는 새로운 테이블(구조)을 추가하거나 기존 구조를 변경했습니다.</li>
+                    <li><strong>효과:</strong> 구조가 바뀌어도 학생들이 로그인해서 보는 '웹 수강신청 화면(응용프로그램)'은 전혀 에러 없이 정상 작동합니다.</li>
+                </ul>
+            </li>
+            <li style="margin-top: 15px;">
+                <span class="hl">② 물리적 독립성 (내부 스키마 ↔ 개념 스키마 방어)</span>
+                <ul>
+                    <li><strong>상황:</strong> 학교 서버실의 구형 하드디스크를 최신형 SSD로 교체하거나 데이터 저장 위치를 바꿨습니다.</li>
+                    <li><strong>효과:</strong> 물리적인 저장 장치가 바뀌어도, DBA가 짜놓은 테이블 설계도(개념 스키마)나 학생들의 수강신청 화면에는 아무런 영향이 없습니다.</li>
+                </ul>
             </li>
         </ul>
+
+        <div class="addon-box">
+            <h4>실무 Add-on &amp; 시험 단골 출제: "사상(Mapping, 매핑)"</h4>
+            <p>이러한 독립성이 유지되는 비결은 각 층 사이에 존재하는 <strong>'사상(Mapping, 연결고리)'</strong> 덕분입니다. 시험에 자주 나오니 짝꿍을 꼭 외워두세요!</p>
+            <ul>
+                <li><strong>논리적 사상 (외부적/개념적 사상):</strong> 외부 스키마와 개념 스키마를 연결. (논리적 독립성 보장)</li>
+                <li><strong>물리적 사상 (개념적/내부적 사상):</strong> 개념 스키마와 내부 스키마를 연결. (물리적 독립성 보장)</li>
+            </ul>
+        </div>
+    </div>
+
+    <h2 class="section-title title-layer">2. 🏢 데이터베이스 3단계 구조 (3-Schema)</h2>
+    <p>데이터 독립성을 지키기 위해 ANSI(미국국립표준협회)에서 데이터베이스를 바라보는 관점을 3개의 층으로 쪼개 놓은 것입니다. <em>(※ 스키마 = 데이터베이스의 뼈대/설계도)</em></p>
+    
+    <div class="content-card">
+        <div class="schema-layer schema-external">
+            <h3>① 외부 스키마 (External Schema) <span class="schema-badge">여러 개 존재</span></h3>
+            <p><strong>"사용자 관점"</strong></p>
+            <div class="analogy-box">
+                🎓 <strong>비유:</strong> 학생들이 스마트폰으로 보는 <strong>[내 수강 시간표]</strong> 화면, 또는 교수님이 보는 <strong>[내 수업 출석부]</strong> 화면입니다.
+            </div>
+            <p><strong>특징:</strong> 전체 DB 중 사용자에게 필요한 아주 일부분만 보여줍니다. 보는 사람에 따라 뷰(View)가 다르기 때문에 시스템 내에 <strong>여러 개</strong>가 존재합니다.</p>
+        </div>
+
+        <div class="schema-layer schema-conceptual">
+            <h3>② 개념 스키마 (Conceptual Schema) <span class="schema-badge">단 1개 존재</span></h3>
+            <p><strong>"DBA/통합 관점"</strong></p>
+            <div class="analogy-box">
+                🎓 <strong>비유:</strong> 총장님과 DBA가 가지고 있는 <strong>'학교 전체 데이터의 마스터 설계도'</strong>입니다.
+            </div>
+            <p><strong>특징:</strong> 학생, 과목, 수강내역 등 모든 테이블과 규칙이 다 모여있는 거대한 전체 밑그림입니다. DB 전체에 <strong>단 1개</strong>만 존재하며, 보통 실무에서 "스키마 짰어?"라고 할 때 이 개념 스키마(ERD)를 말합니다.</p>
+        </div>
+
+        <div class="schema-layer schema-internal">
+            <h3>③ 내부 스키마 (Internal Schema) <span class="schema-badge">단 1개 존재</span></h3>
+            <p><strong>"시스템/물리적 관점"</strong></p>
+            <div class="analogy-box">
+                🎓 <strong>비유:</strong> 서버실 엔지니어가 쳐다보는 <strong>'0과 1, 그리고 하드디스크 디렉토리'</strong>입니다.
+            </div>
+            <p><strong>특징:</strong> 데이터가 실제로 컴퓨터 하드웨어의 어느 구역에, 어떤 크기로, 어떻게 저장될지, 인덱스는 어떻게 걸려있는지를 다루는 가장 밑바닥 물리적 단계입니다.</p>
+        </div>
+    </div>
+
+    <h2 class="section-title title-draw">3. 🎨 데이터 모델의 표기법 (ERD)</h2>
+    <div class="content-card">
+        <p>"학생이 과목을 수강한다"는 업무 규칙을 전 세계 공통의 그림(ERD)으로 그리는 방법입니다.</p>
+        
+        <ul>
+            <li>
+                <span class="hl">① Chen (첸) 표기법</span>
+                <p><strong>특징:</strong> 관계를 마름모(◇)로 표현합니다. 최초의 표기법이지만 실무에서는 거의 쓰지 않고 대학교 이론이나 시험에서만 다룹니다.<br>
+                🎓 <strong>비유:</strong> <code>[학생] ── ◇수강한다◇ ── [과목]</code></p>
+            </li>
+            
+            <li>
+                <span class="hl">② 🌟 IE / Crow's Foot (까마귀 발) 표기법</span>
+                <p><strong>특징:</strong> 현재 실무와 SQLD 시험에서 <strong>가장 압도적으로 많이 쓰이는 표준 표기법</strong>입니다. 데이터가 여러 개(Many) 연결될 수 있는 쪽에 <strong>'까마귀 발(삼지창)'</strong> 모양을 그립니다.<br>
+                🎓 <strong>비유:</strong> 1명의 학생은 '여러 개'의 수강내역을 가질 수 있습니다. 따라서 <code>학생</code> 쪽은 작대기 하나(<code>|</code>)를 긋고, <code>수강내역</code> 쪽에는 까마귀 발(<code>∈</code>)을 그립니다.<br>
+                <strong>표현:</strong> <code>[학생] ───+-----------&lt; [수강내역]</code></p>
+            </li>
+
+            <li>
+                <span class="hl">③ Barker (바커) 표기법</span>
+                <p><strong>특징:</strong> 오라클(Oracle)에서 표준으로 채택하여 사용하는 표기법입니다. IE와 비슷하지만, 속성 앞에 식별자는 <code>#</code>, 필수는 <code>*</code>, 선택은 <code>o</code> 기호를 붙여 아주 직관적으로 표현합니다.</p>
+            </li>
+
+            <li>
+                <span class="hl">④ UML 표기법</span>
+                <p><strong>특징:</strong> 데이터베이스보다는 소프트웨어(객체지향 프로그래밍) 설계에서 주로 쓰는 방식입니다. 표 위에 <code>&lt;&lt;Entity&gt;&gt;</code> 같은 태그를 달아 표현하는 클래스 다이어그램이 대표적입니다.</p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="exam-box">
+        <h2>💡 실전 대비 1초 컷 기출 포인트</h2>
+        <p style="text-align: center; margin-bottom: 25px; opacity: 0.9;">시험장에서는 다음 키워드 매칭만 확인하면 보기에서 바로 정답을 고를 수 있습니다!</p>
+        
+        <div class="flashcard">
+            <div class="flashcard-q">"사용자 관점, 여러 개 존재한다"</div>
+            <div class="flashcard-a">➔ 외부 스키마</div>
+        </div>
+        <div class="flashcard">
+            <div class="flashcard-q">"모든 데이터 구조를 묶은 전체 데이터베이스, DBA 관점"</div>
+            <div class="flashcard-a">➔ 개념 스키마</div>
+        </div>
+        <div class="flashcard">
+            <div class="flashcard-q">"저장 장치 구조 변경이 응용프로그램에 영향을 주지 않는다"</div>
+            <div class="flashcard-a">➔ 물리적 독립성</div>
+        </div>
+        <div class="flashcard">
+            <div class="flashcard-q">"관계의 다(Many)를 나타낼 때 까마귀 발을 쓴다"</div>
+            <div class="flashcard-a">➔ IE 표기법</div>
+        </div>
     </div>
 
 </div>

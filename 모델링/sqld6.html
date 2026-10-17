@@ -3,258 +3,342 @@
 <html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQLD 1과목: 데이터 모델링의 3대 특징과 활용</title>
+    <title>SQLD 1과목: ERD 표기법과 작성 6단계 절차</title>
     <style>
-        /* 기본 스타일 및 폰트 설정 */
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #2980b9;
-            --accent-color: #e74c3c;
-            --bg-color: #f0f4f8;
-            --text-color: #333;
+            --primary: #2c3e50;
+            --secondary: #1abc9c;
+            --accent: #e74c3c;
+            --bg-color: #f4f7f6;
             --card-bg: #ffffff;
-            --analogy-bg: #e1f0fa;
-            --analogy-border: #3498db;
-            --warning-bg: #fdedec;
-            --warning-border: #c0392b;
+            --text-color: #333333;
+            --text-muted: #666666;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
         body {
             font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            line-height: 1.7;
+            line-height: 1.6;
             margin: 0;
             padding: 40px 20px;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
             background-color: var(--card-bg);
-            padding: 50px;
+            padding: 45px;
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow);
         }
 
-        /* 제목 스타일 */
         h1 {
-            color: var(--primary-color);
+            color: var(--primary);
             font-size: 2.2rem;
             text-align: center;
-            border-bottom: 3px solid var(--secondary-color);
+            border-bottom: 3px solid var(--secondary);
             padding-bottom: 15px;
             margin-bottom: 40px;
         }
 
         h2 {
-            color: var(--secondary-color);
+            color: var(--primary);
             font-size: 1.6rem;
             margin-top: 50px;
-            display: flex;
-            align-items: center;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #ecf0f1, transparent);
+            border-left: 5px solid var(--secondary);
+            border-radius: 4px;
         }
 
-        h2::before {
-            content: "📌";
-            margin-right: 10px;
+        /* 6단계 타임라인 스타일 */
+        .timeline {
+            position: relative;
+            margin: 30px 0;
+            padding-left: 30px;
         }
 
-        h3 {
-            color: var(--primary-color);
-            font-size: 1.3rem;
-            margin-top: 30px;
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background-color: #bdc3c7;
         }
 
-        /* 카드 및 박스 스타일 */
-        .feature-card {
-            background-color: #fafbfc;
-            border: 1px solid #e1e4e8;
+        .step-card {
+            position: relative;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
             border-radius: 8px;
-            padding: 25px;
+            padding: 20px 25px;
             margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
             transition: transform 0.2s ease;
         }
 
-        .feature-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        .step-card:hover {
+            transform: translateX(5px);
+            border-color: var(--secondary);
         }
 
-        .feature-card h3 {
+        .step-marker {
+            position: absolute;
+            left: -39px;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--secondary);
+            border: 4px solid #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px #bdc3c7;
+        }
+
+        .step-card h3 {
+            color: var(--primary);
             margin-top: 0;
-            color: var(--secondary-color);
-            border-bottom: 2px dashed #e1e4e8;
-            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 1.3rem;
         }
 
+        .step-card h3 span {
+            background-color: var(--secondary);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+
+        /* 비유 & Add-on 박스 */
         .analogy-box {
-            background-color: var(--analogy-bg);
-            border-left: 5px solid var(--analogy-border);
-            padding: 15px 20px;
-            margin: 15px 0;
-            border-radius: 0 8px 8px 0;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 0 6px 6px 0;
         }
 
-        .analogy-box h4 {
-            margin: 0 0 10px 0;
-            color: #21618c;
-            display: flex;
-            align-items: center;
-        }
-        
-        .analogy-box h4::before {
-            content: "🎓";
-            margin-right: 8px;
+        .analogy-box strong { color: #2980b9; }
+
+        .addon-box {
+            background-color: #fff9f0;
+            padding: 12px 15px;
+            margin-top: 15px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #d35400;
         }
 
-        .warning-box {
-            background-color: var(--warning-bg);
-            border-left: 5px solid var(--warning-border);
-            padding: 20px;
-            margin: 30px 0;
-            border-radius: 0 8px 8px 0;
+        /* ERD 기호 스타일 */
+        .symbol-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
         }
 
-        .warning-box h3 {
-            color: var(--warning-border);
-            margin-top: 0;
-            display: flex;
-            align-items: center;
-        }
-
-        .warning-box h3::before {
-            content: "🚨";
-            margin-right: 8px;
-        }
-
-        .summary-box {
-            background-color: #fef9e7;
-            border: 2px solid #f4d03f;
+        .symbol-card {
+            background: #fdfefe;
+            border: 2px solid #ebdef0;
+            border-radius: 10px;
             padding: 25px;
-            border-radius: 8px;
             text-align: center;
-            font-size: 1.1rem;
+        }
+
+        .symbol-card h3 { color: #8e44ad; margin-top: 0; border-bottom: 1px dashed #ebdef0; padding-bottom: 10px; }
+        
+        .symbol-icon {
+            font-size: 3rem;
+            color: #2c3e50;
             font-weight: bold;
-            margin-top: 40px;
+            margin: 15px 0;
+            background: #f4ecf7;
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 10px;
         }
 
-        /* 텍스트 강조 스타일 */
-        strong {
-            color: var(--accent-color);
-        }
-
-        .highlight {
-            background: linear-gradient(180deg, rgba(255,255,255,0) 60%, #ffeaa7 40%);
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        ul {
-            padding-left: 25px;
-            margin-bottom: 15px;
-        }
-
-        li {
-            margin-bottom: 10px;
-        }
-
-        hr {
-            border: 0;
-            height: 1px;
-            background: #e1e4e8;
+        /* 기출 암기 박스 */
+        .exam-box {
+            background: linear-gradient(135deg, #2c3e50, #1a252f);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
             margin: 40px 0;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .exam-box h2 {
+            background: none;
+            border: none;
+            color: #f1c40f;
+            margin-top: 0;
+            padding: 0;
+            justify-content: center;
+        }
+
+        .exam-box .keyword {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #f1c40f;
+            letter-spacing: 2px;
+            padding: 15px;
+            border: 2px dashed #f1c40f;
+            display: inline-block;
+            margin: 15px 0;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .highlight { font-weight: bold; color: var(--accent); }
+        .erd-visual { font-family: monospace; font-size: 1.2rem; background: #eee; padding: 10px; border-radius: 5px; display: inline-block; letter-spacing: -1px; }
+
+        @media (max-width: 768px) {
+            .symbol-grid { grid-template-columns: 1fr; }
+            .exam-box .keyword { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>📐 1과목 초핵심: 데이터 모델링의 3대 특징</h1>
-    
-    <p>우리가 앞서 어렵게 느꼈던 <em>"모델이란 사물 또는 사건에 관한 양상이나 관점을 명확하게 하는 것"</em>이라는 문장은, 결국 데이터 모델링이 가진 <strong>3가지 핵심 성격(추상화·단순화·명확성)</strong>을 학술적으로 풀어쓴 것입니다. 시험에 보기로 아주 자주 출제되며, 실무에서도 좋은 설계를 평가하는 기준이 되니 실무 예시와 함께 완벽히 매칭해 두세요.</p>
+    <h1>📖 1과목 핵심 요약: ERD 표기법과 작성 6단계 절차</h1>
 
-    <div class="feature-card">
-        <h3>1. 추상화 (Abstraction) : "필요한 특징만 쏙 뽑아내기"</h3>
-        <ul>
-            <li><strong>교재 속 정의:</strong> 현실 세계의 복잡한 현상을 일정한 양식과 기호에 맞춰 간략하게 표현하는 것. (앞서 배운 '가설적' 표현과 같은 맥락입니다.)</li>
-            <li><strong>💡 실무 Add-on:</strong> 추상화를 잘해야 데이터베이스의 불필요한 용량 낭비를 막고, 시스템이 핵심 비즈니스 로직에만 집중할 수 있습니다.</li>
-        </ul>
-        <div class="analogy-box">
-            <h4>수강신청 예시</h4>
-            <p>현실의 '옥한빛' 학생은 좋아하는 음악, 시력, 발 사이즈, 성격 등 수만 가지 특징을 가진 복잡한 존재입니다. 하지만 대학교 학사 관리 시스템(관점)에서는 이런 정보가 필요 없습니다. 오직 시스템 구축에 꼭 필요한 <strong>[학번, 이름, 학과, 학년]</strong>이라는 핵심 특징만 쏙 뽑아내어 <code>student</code> 테이블의 속성으로 정의하는 과정이 바로 '추상화'입니다.</p>
+    <h2>2. 🗺️ 대학교 설계도 그리기: ERD 작성 6단계 (초핵심!)</h2>
+    <p>건축가가 설계도를 그릴 때도 순서가 있듯, ERD를 그리는 완벽한 6단계 절차가 있습니다. <strong class="highlight">시험에서 "다음 중 ERD 작성 순서로 올바른 것은?" 하고 순서 맞추기 문제로 무조건 출제됩니다.</strong></p>
+
+    <div class="exam-box">
+        <h2>🚨 실전 대비 초압축 암기 공식</h2>
+        <p>시험장에서는 이 여섯 글자만 똑똑히 기억하시면 1초 만에 정답을 찾습니다!</p>
+        <div class="keyword">"도·배·설·명·참·필"</div>
+        <p style="opacity: 0.9; font-size: 0.9rem;">(도출 ➔ 배치 ➔ 관계 설정 ➔ 관계명 ➔ 참여도 ➔ 필수 여부)</p>
+    </div>
+
+    <div class="timeline">
+        <div class="step-card">
+            <div class="step-marker"></div>
+            <h3><span>1단계</span> 엔터티를 그린다 (도출)</h3>
+            <p><strong>설명:</strong> 시스템에 필요한 명사(주인공)들을 찾아 네모 박스로 그립니다.</p>
+            <div class="analogy-box">
+                <strong>🎓 수강신청 비유:</strong> 백지에 <strong>[학생]</strong>, <strong>[수강내역]</strong>, <strong>[과목]</strong> 이라는 3개의 네모 박스를 덩그러니 그립니다.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-marker"></div>
+            <h3><span>2단계</span> 엔터티를 적절하게 배치한다 (배치)</h3>
+            <p><strong>설명:</strong> 아무렇게나 두는 것이 아니라, 가장 중요하고 기준이 되는 업무의 핵심 엔터티를 <strong>왼쪽 상단(Top-Left)</strong>에 두고, 연결 고리가 되는 중심 엔터티를 <strong>중앙</strong>에 배치합니다.</p>
+            <div class="analogy-box">
+                <strong>🎓 수강신청 비유:</strong> 대학교의 가장 기본인 <strong>[학생]</strong> 박스를 왼쪽 위에 둡니다. 그리고 학생과 과목을 이어주는 핵심인 <strong>[수강내역]</strong> 박스를 한가운데에 배치합니다.
+            </div>
+            <div class="addon-box">
+                💡 <strong>실무 Add-on:</strong> 왜 왼쪽 상단일까요? 인간의 시선은 본능적으로 좌측 상단에서 우측 하단(Z자 형태)으로 이동하기 때문입니다. 설계도를 읽는 사람을 위한 배려입니다.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-marker"></div>
+            <h3><span>3단계</span> 엔터티 간의 관계를 설정한다 (관계 설정)</h3>
+            <p><strong>설명:</strong> 네모 박스들 사이에 선을 그어서 서로 어떤 연관이 있는지 이어줍니다.</p>
+            <div class="analogy-box">
+                <strong>🎓 수강신청 비유:</strong> [학생]과 [수강내역] 사이에 1차적으로 선을 긋고, [과목]과 [수강내역] 사이에도 선을 긋습니다.
+            </div>
+            <div class="addon-box">
+                💡 <strong>실무 Add-on:</strong> 이때 선이 꼬리를 물고 무한 루프를 도는 <strong>순환(Circle) 관계</strong>가 발생하지 않도록 조심해야 합니다. 데이터 무결성에 심각한 오류를 낼 수 있습니다.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-marker"></div>
+            <h3><span>4단계</span> 관계명을 기술한다 (관계명)</h3>
+            <p><strong>설명:</strong> 선만 그어두면 무슨 뜻인지 모르니, 선 위에 동사(현재형)로 이름을 적어줍니다. 너무 포괄적이거나 애매한 단어는 피합니다.</p>
+            <div class="analogy-box">
+                <strong>🎓 수강신청 비유:</strong> 
+                <br>• 학생 ➔ 수강내역 선 위에: <strong>"신청한다"</strong>
+                <br>• 과목 ➔ 수강내역 선 위에: <strong>"포함된다"</strong>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-marker"></div>
+            <h3><span>5단계</span> 관계의 참여도를 기술한다 (참여도)</h3>
+            <p><strong>설명:</strong> 1:1인지, 1:M(다수)인지, M:N인지 개수(수량)를 파악하여 기호를 표시합니다.</p>
+            <div class="analogy-box">
+                <strong>🎓 수강신청 비유:</strong> 학생 1명이 '여러 개'의 과목을 수강할 수 있으므로, 수강내역 쪽에 <strong>까마귀 발(삼지창)</strong> 모양을 그려줍니다. (1:M 관계 완성)
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-marker"></div>
+            <h3><span>6단계</span> 관계의 필수 여부를 기술한다 (필수 여부)</h3>
+            <p><strong>설명:</strong> 이 관계가 반드시 있어야만 하는가(필수), 없어도 되는가(선택)를 표시합니다. 선택 참여일 경우 선 끝에 <strong>동그라미(O)</strong>를 그립니다.</p>
+            <div class="analogy-box">
+                <strong>🎓 수강신청 비유:</strong> 신입생은 아직 수강신청을 '0건' 했을 수도 있습니다. 수강내역이 하나도 없을 수도 있으므로, 선 끝에 <strong>선택(O) 기호</strong>를 그려줍니다.
+            </div>
         </div>
     </div>
 
-    <div class="feature-card">
-        <h3>2. 단순화 (Simplification) : "어린이도 알 수 있게 군더더기 빼기"</h3>
-        <ul>
-            <li><strong>교재 속 정의:</strong> 복잡한 현실 세계를 제한된 표기법이나 언어로 표현하여, 누구나 쉽게 이해할 수 있게 하는 것.</li>
-            <li><strong>💡 실무 Add-on:</strong> 단순화를 위해 전 세계 개발자가 공통으로 사용하는 언어가 바로 <strong>ERD(Entity-Relationship Diagram)</strong>와 까마귀 발 표기법입니다.</li>
-        </ul>
-        <div class="analogy-box">
-            <h4>수강신청 예시</h4>
-            <p>학생들이 수강신청을 할 때 일어나는 복잡한 일들(서버 접속 대기, 장바구니 담기, 클릭 전쟁 등)을 전부 다 설계도에 적으면 아무도 알아보지 못합니다. 이를 딱 세 단어인 <strong>[학생], [과목], [수강신청(enrol)]</strong>이라는 사각형(엔터티)과 선(관계)으로만 단순하게 요약하여 표기법(ERD)에 맞게 그려내는 것이 '단순화'입니다.</p>
+    <hr style="border: 0; height: 1px; background: #e0e0e0; margin: 50px 0;">
+
+    <h2>📖 1과목 핵심 요약 : ERD 관계 선 그리기 (IE 표기법)</h2>
+    <p>앞서 ERD 작성 6단계 중 5단계(참여도)와 6단계(필수 여부)를 시각적으로 어떻게 그리는지 보여주는 파트입니다. 시험에 나오는 기호는 딱 3가지만 완벽히 구별하시면 됩니다.</p>
+
+    <div class="symbol-grid">
+        <div class="symbol-card">
+            <h3>1. 🔱 관계의 참여도 (1 vs M)</h3>
+            <p style="color: #666; font-size: 0.95rem;">선 끝이 갈라지는지 아닌지로 개수를 파악합니다.</p>
+            
+            <div class="symbol-icon">|</div>
+            <p><strong>작대기 하나 : 1개</strong></p>
+            <div class="analogy-box" style="text-align: left; font-size: 0.9rem;">
+                수강내역 1줄은 반드시 <strong>'1명'</strong>의 학생에게만 속합니다.<br>(수강내역 쪽에서 학생 쪽을 바라볼 때)
+            </div>
+
+            <div class="symbol-icon" style="margin-top: 20px;">∈</div>
+            <p><strong>까마귀 발(삼지창) : 여러 개 (M, 다수)</strong></p>
+            <div class="analogy-box" style="text-align: left; font-size: 0.9rem;">
+                학생 1명은 <strong>'여러 개'</strong>의 수강내역을 가질 수 있습니다.<br>(학생 쪽에서 수강내역 쪽을 바라볼 때)
+            </div>
+        </div>
+
+        <div class="symbol-card">
+            <h3>2. ⭕ 관계의 필수 여부 (반드시?)</h3>
+            <p style="color: #666; font-size: 0.95rem;">선 끝에 동그라미가 있는지, 작대기가 있는지를 봅니다.</p>
+
+            <div class="symbol-icon">|</div>
+            <p><strong>작대기 : 필수 (Mandatory)</strong></p>
+            <div class="analogy-box" style="text-align: left; font-size: 0.9rem;">
+                수강내역이 존재하려면 <strong>반드시</strong> 그 주인이 되는 '학생'이 있어야 합니다. 학생 쪽 선 끝에는 필수(<code>|</code>)를 긋습니다.
+            </div>
+
+            <div class="symbol-icon" style="margin-top: 20px;">O</div>
+            <p><strong>동그라미 : 선택 (Optional)</strong></p>
+            <div class="analogy-box" style="text-align: left; font-size: 0.9rem;">
+                갓 입학한 신입생은 아직 수강신청을 안 했을 수도(0개) 있습니다. 수강내역 쪽 선 끝에는 선택(<code>O</code>)을 긋습니다.
+            </div>
         </div>
     </div>
 
-    <div class="feature-card">
-        <h3>3. 명확성 / 정확성 (Clarity) : "동상이몽 방지! 오직 하나의 의미로만"</h3>
-        <ul>
-            <li><strong>교재 속 정의:</strong> 대상에 대한 애매모호함을 제거하고, 연관된 사람들이 오해 없이 정확하게 한 가지 의미로만 이해하도록 명확하게 기술하는 것.</li>
-            <li><strong>💡 실무 Add-on:</strong> 기획자, 개발자, DBA 등 다양한 부서의 사람들이 모여서 협업할 때, 명확성이 결여된 모델은 필연적으로 시스템 결함을 초래합니다.</li>
-        </ul>
-        <div class="analogy-box">
-            <h4>수강신청 예시</h4>
-            <p>학사팀 교직원이 개발자에게 "학생이 과목을 들으면 성적이 나와요"라고 말로만 하면, 개발자는 성적을 'A, B, C' 텍스트로 넣어야 할지, '100점, 90점' 숫자로 넣어야 할지 헷갈립니다. 모델링을 통해 <code>enrol</code> 테이블의 <code>enr_grade NUMBER</code> 라고 명확하게 못을 박아두면, <strong>"아, 성적은 숫자로 정밀하게 기록되는구나!"</strong>라고 모두가 오해 없이 한 목소리를 내게 됩니다.</p>
-        </div>
-    </div>
-
-    <hr>
-
-    <h1>📖 1과목 핵심 요약: 데이터 모델링의 활용 시기</h1>
-    
-    <p>"정보시스템 구축에서 모델링은 계획, 분석, 설계 단계에서 업무를 분석하고 설계할 때, 이후 구축, 운영 단계에서 변경과 관리할 때 이용된다" 라는 복잡한 문장은 결국 <strong>'건물을 지을 때 설계도가 언제 필요한가'</strong>를 묻는 상식적인 이야기입니다.</p>
-
-    <h2>1. 🏗️ 건물을 짓기 전: 계획, 분석, 설계 단계</h2>
-    <p class="highlight">"어떤 시스템을 만들지 고민하고 밑그림을 그릴 때 쓰인다."</p>
-    <ul>
-        <li><strong>계획/분석 단계 (개념적 모델링):</strong> 총장님이 "수강신청 시스템을 새로 만들자!"라고 지시합니다. 모델러는 실무자를 찾아가 업무를 분석하여 <strong>[학생], [과목]이라는 큰 뼈대(엔터티)를 뽑아냅니다.</strong></li>
-        <li><strong>설계 단계 (논리적/물리적 모델링):</strong> 뽑아낸 정보들을 모아서 전 세계 공통 약속인 ERD로 예쁘게 그립니다. <em>"학생은 학번을 PK로 삼고, 수강내역과 1:M 관계로 묶자!"</em> ➔ 개발자들이 코딩에 들어가기 전, <strong>완벽한 뼈대(설계도)를 완성</strong>하는 과정입니다.</li>
-    </ul>
-
-    <h2>2. 🚀 건물을 짓고 난 후: 구축, 운영 단계</h2>
-    <p class="highlight">"실제 코딩을 할 때와 나중에 시스템을 고칠 때 쓰인다."</p>
-    <ul>
-        <li><strong>구축 단계:</strong> 진짜 프로그래머들이 투입됩니다. 말로 묻지 않고, 앞서 그려둔 <strong>ERD(데이터 모델) 문서만 쫙 펼쳐놓고</strong>, 그 그림을 보며 실제 DB에 테이블(<code>CREATE TABLE</code>)을 만듭니다. ➔ 실제 시스템 구축 시 <strong>가장 정확한 시공 도면</strong>이 됩니다.</li>
-        <li><strong>운영/변경 단계 (★가장 중요!):</strong> 시스템 완성 후 3년 뒤, 대학교에 '복수전공' 제도가 생겼습니다. 처음 만든 개발자가 퇴사했더라도, 후임 개발자는 <strong>과거에 그려둔 ERD를 꺼내 봅니다.</strong> <em>"아, [학생] 테이블 구조가 이렇구나. 여기서 선을 하나 더 빼서 [복수전공]을 연결하면 시스템이 안 무너지겠네!"</em> ➔ 시스템 붕괴 없이 <strong>안전하게 변경하고 관리</strong>할 수 있습니다. (모델이 곧 살아있는 문서가 됨)</li>
-    </ul>
-
-    <div class="summary-box">
-        💡 한 줄 요약<br>
-        <span style="font-weight: normal; margin-top: 10px; display: block;">"잘 그려둔 데이터 모델(설계도)은 시스템을 기획할 때 밑그림이 되고, 나중에 기능이 추가되거나 담당자가 바뀌어도 시스템을 안전하게 고칠 수 있는 최고의 설명서(가이드북)가 된다."</span>
-    </div>
-
-    <hr>
-
-    <div class="warning-box">
-        <h3>SQLD 실전 기출 함정 파헤치기</h3>
-        <p>시험 문제에서는 이 3가지 단어의 정의를 슬쩍 뒤바꾸거나, 엉뚱한 단어를 끼워 넣어 오답을 만듭니다.</p>
+    <div style="background-color: #fdf2e9; border: 2px solid #e67e22; border-radius: 10px; padding: 30px; margin-top: 40px; text-align: center;">
+        <h3 style="color: #d35400; margin-top: 0;">💡 기호들을 완벽하게 조합해 보기 (1:M 선택 관계)</h3>
         
-        <p><strong>[기출 보기]</strong> "데이터 모델링은 현실 세계의 복잡성을 그대로 반영하기 위해 최대한 <strong>'상세화'</strong>하여 표현해야 한다."</p>
+        <div class="erd-visual">
+            [학생] ───|초───────O∈ [수강내역]
+        </div>
         
-        <ul>
-            <li><strong>정답:</strong> <strong style="font-size: 1.2rem;">X (틀림!)</strong></li>
-            <li><strong>해설:</strong> 데이터 모델링은 현실을 100% 똑같이 복제하는 것이 아닙니다. 복잡한 현실을 시스템에 맞게 줄여주는 <strong>'추상화'</strong>, <strong>'단순화'</strong>가 핵심 특징입니다. 너무 상세하게 다 적으려고 하면 모델링의 본질을 잃어버리게 됩니다.</li>
-        </ul>
-    </div>
-
-    <div class="summary-box" style="background-color: var(--primary-color); color: white; border-color: var(--primary-color);">
-        <h3 style="color: white; margin-top: 0;">🎯 3줄 최종 요약 암기법</h3>
-        <ul style="text-align: left; margin: 0 auto; display: inline-block;">
-            <li><strong>추상화:</strong> 현실에서 핵심만 <strong>추</strong>출하기 (학번, 이름만 쏙!)</li>
-            <li><strong>단순화:</strong> 표기법을 통해 <strong>단</strong>순하게 줄이기 (사각형과 선으로 찍!)</li>
-            <li><strong>명확성:</strong> 애매함 없이 <strong>명</strong>확하게 약속하기 (동상이몽 방지!)</li>
+        <ul style="text-align: left; max-width: 600px; margin: 20px auto 0 auto; color: #555; line-height: 1.8;">
+            <li><strong>해석 1:</strong> 학생 1명은 수강내역을 안 가질 수도(<strong>O</strong>), 여러 개 가질 수도(<strong>∈</strong>) 있다.</li>
+            <li><strong>해석 2:</strong> 수강내역은 주인이 되는 1명(<strong>|</strong>)의 학생을 반드시(<strong>|</strong>) 가져야 한다.</li>
+            <li style="color: #d35400; font-weight: bold; list-style: none; text-align: center; margin-top: 10px;">
+                ➔ 설계도를 그리는 'IE 표기법'의 가장 완벽하고 흔한 형태입니다!
+            </li>
         </ul>
     </div>
 
